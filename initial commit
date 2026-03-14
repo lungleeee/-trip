@@ -1,0 +1,344 @@
+<!DOCTYPE html>
+<html lang="zh-TW">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
+    <title>BUSAN Sakura Trip 2026</title>
+    <script src="https://cdn.tailwindcss.com"></script>
+    <link href="https://fonts.googleapis.com/css2?family=Noto+Sans+TC:wght@300;500;700&family=Quicksand:wght@500;700&display=swap" rel="stylesheet">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+    
+    <script>
+        tailwind.config = {
+            theme: {
+                extend: {
+                    colors: {
+                        sakura: {
+                            light: '#fff5f7',
+                            pink: '#ffb7c5',
+                            deep: '#ff8da1',
+                            blue: '#e0f2fe',
+                            ocean: '#0ea5e9'
+                        }
+                    },
+                    fontFamily: {
+                        sans: ['Noto Sans TC', 'sans-serif'],
+                        display: ['Quicksand', 'sans-serif'],
+                    },
+                    borderRadius: { 'sakura': '1.5rem' }
+                }
+            }
+        }
+    </script>
+    <style>
+        body { background: linear-gradient(135deg, #fff5f7 0%, #e0f2fe 100%); background-attachment: fixed; color: #4a4a4a; -webkit-tap-highlight-color: transparent; }
+        .glass-card { background: rgba(255, 255, 255, 0.75); backdrop-filter: blur(12px); border: 1px solid rgba(255, 255, 255, 0.4); box-shadow: 0 8px 24px rgba(255, 141, 161, 0.1); }
+        .nav-item.active { color: #ff8da1; }
+        .timeline-line::before { content: ''; position: absolute; left: 20px; top: 0; bottom: 0; width: 2px; background: linear-gradient(to bottom, #ffb7c5, transparent); }
+        .tag { font-size: 10px; padding: 2px 8px; border-radius: 999px; font-weight: 700; display: inline-flex; align-items: center; gap: 4px; }
+        .tag-trans { background: #e0f2fe; color: #0369a1; }
+        .tag-dur { background: #fff1f2; color: #be123c; }
+        .btn-gradient { background: linear-gradient(90deg, #ffb7c5, #ff8da1); color: white; }
+    </style>
+</head>
+<body class="font-sans">
+
+    <header class="sticky top-0 z-50 bg-white/60 backdrop-blur-md px-6 py-4 flex justify-between items-center border-b border-sakura-pink/20">
+        <div>
+            <h1 class="font-display text-2xl font-bold tracking-tight text-sakura-deep">Busan <span class="font-light">Sakura</span></h1>
+            <p class="text-[10px] text-sakura-pink font-bold tracking-widest uppercase italic">Spring Travel Companion</p>
+        </div>
+        <div id="vbp-timer" class="text-[10px] bg-white px-3 py-1 rounded-full border border-sakura-pink text-sakura-deep font-bold shadow-sm">
+            <i class="fas fa-history mr-1"></i>VBP 48H
+        </div>
+    </header>
+
+    <main id="app-content" class="pb-24 pt-4"></main>
+
+    <nav class="fixed bottom-4 left-4 right-4 bg-white/90 backdrop-blur-lg border border-white/40 px-2 py-2 flex justify-around rounded-sakura shadow-2xl safe-area-bottom z-50">
+        <button onclick="switchTab('plan')" class="nav-item flex flex-col items-center py-2 w-1/5 text-gray-400" id="nav-plan">
+            <i class="fas fa-map-marked-alt text-lg"></i><span class="text-[10px] mt-1 font-bold">行程</span>
+        </button>
+        <button onclick="switchTab('guide')" class="nav-item flex flex-col items-center py-2 w-1/5 text-gray-400" id="nav-guide">
+            <i class="fas fa-lightbulb text-lg"></i><span class="text-[10px] mt-1 font-bold">重點</span>
+        </button>
+        <button onclick="switchTab('wallet')" class="nav-item flex flex-col items-center py-2 w-1/5 text-gray-400" id="nav-wallet">
+            <i class="fas fa-calculator text-lg"></i><span class="text-[10px] mt-1 font-bold">記帳</span>
+        </button>
+        <button onclick="switchTab('lists')" class="nav-item flex flex-col items-center py-2 w-1/5 text-gray-400" id="nav-lists">
+            <i class="fas fa-heart text-lg"></i><span class="text-[10px] mt-1 font-bold">備忘</span>
+        </button>
+        <button onclick="switchTab('info')" class="nav-item flex flex-col items-center py-2 w-1/5 text-gray-400" id="nav-info">
+            <i class="fas fa-info-circle text-lg"></i><span class="text-[10px] mt-1 font-bold">資訊</span>
+        </button>
+    </nav>
+
+    <script>
+        // --- 完整行程資料 ---
+        const itinerary = [
+            { day: 1, date: "3/16 (一)", focus: "影島藝術與南浦美食", items: [
+                { time: "08:00", title: "前往南浦洞", desc: "K-GUESTHOUSE 寄放行李", trans: "Taxi/Uber (₩18k)", dur: "30m", icon: "fa-taxi" },
+                { time: "08:30", title: "密陽血腸豬肉湯飯", desc: "南浦店早餐", trans: "步行", dur: "1h", icon: "fa-utensils" },
+                { time: "10:00", title: "ARTE MUSEUM", desc: "🌟 VBP 啟用刷卡", trans: "Uber (₩8k)", dur: "2h", icon: "fa-palette", highlight: true },
+                { time: "12:00", title: "P.ARK 咖啡廳", desc: "看海景吃午餐輕食", trans: "步行 3m", dur: "1.5h", icon: "fa-coffee" },
+                { time: "13:30", title: "白淺灘文化村", desc: "Having Moment 拿鐵", trans: "Uber (₩6k)", dur: "2h", icon: "fa-camera" },
+                { time: "17:00", title: "南浦/富平商圈", desc: "BIFF 廣場、李家辣年糕", trans: "步行", dur: "2h", icon: "fa-shopping-bag" },
+                { time: "19:00", title: "樂天超市 (光復店)", desc: "採買伴手禮回飯店", trans: "步行", dur: "2h", icon: "fa-cart-shopping" }
+            ]},
+            { day: 2, date: "3/17 (二)", focus: "海濱列車與樂天世界", items: [
+                { time: "09:00", title: "跨區移動", desc: "海雲台 LCT Residence 寄行李", trans: "Uber (₩20k)", dur: "40m", icon: "fa-taxi" },
+                { time: "10:00", title: "海濱列車", desc: "🌟 VBP 換票 (尾浦→松亭)", trans: "列車", dur: "30m", icon: "fa-train" },
+                { time: "10:40", title: "Skyline Luge", desc: "🌟 VBP 玩 2 次滑車", trans: "Uber (₩5.6k)", dur: "1h 50m", icon: "fa-bolt" },
+                { time: "14:00", title: "釜山樂天世界", desc: "🌟 VBP 暢玩樂園", trans: "步行/短程 Uber", dur: "2h", icon: "fa-star" },
+                { time: "16:30", title: "天空膠囊列車", desc: "預約夕陽回程 (青沙浦→尾浦)", trans: "自費列車", dur: "30m", icon: "fa-cloud-sun", highlight: true },
+                { time: "17:00", title: "BUSAN X the SKY", desc: "🌟 VBP 登 100 樓夜景", trans: "步行", dur: "1.5h", icon: "fa-building" }
+            ]},
+            { day: 3, date: "3/18 (三)", focus: "汗蒸幕與西面瘋狂購物", items: [
+                { time: "09:45", title: "Spa Land 汗蒸幕", desc: "🌟 VBP 10:00 前必刷入", trans: "巴士 (₩3.1k)", dur: "2h 45m", icon: "fa-hot-tub", highlight: true },
+                { time: "12:30", title: "李在模披薩 (西面店)", desc: "外帶機點餐後坐著享用", trans: "地鐵 2 號線", dur: "1h", icon: "fa-pizza-slice" },
+                { time: "13:30", title: "西面爆買", desc: "Musinsa, HDEX, Olive Young", trans: "步行", dur: "2.5h", icon: "fa-shopping-cart" },
+                { time: "16:00", title: "83 獬豸烤肉", desc: "第一波進場免排隊", trans: "步行", dur: "1.5h", icon: "fa-fire" },
+                { time: "19:15", title: "前往機場", desc: "21:50 班機起飛", trans: "地鐵+輕軌", dur: "45m", icon: "fa-plane" }
+            ]}
+        ];
+
+        let walletData = JSON.parse(localStorage.getItem('busan_wallet') || '[]');
+        let checkList = JSON.parse(localStorage.getItem('busan_checklist') || '[]');
+        let memo = localStorage.getItem('busan_memo') || '';
+        const exchangeRate = 42;
+
+        function switchTab(tab) {
+            document.querySelectorAll('.nav-item').forEach(el => el.classList.remove('active', 'text-sakura-deep'));
+            document.getElementById(`nav-${tab}`).classList.add('active', 'text-sakura-deep');
+            const content = document.getElementById('app-content');
+            if (tab === 'plan') renderPlan(content);
+            else if (tab === 'guide') renderGuide(content);
+            else if (tab === 'wallet') renderWallet(content);
+            else if (tab === 'lists') renderLists(content);
+            else if (tab === 'info') renderInfo(content);
+            window.scrollTo(0,0);
+        }
+
+        function renderPlan(el) {
+            let html = `<div class="px-6 space-y-10 timeline-line relative">`;
+            itinerary.forEach(day => {
+                html += `
+                <div class="relative">
+                    <div class="flex items-center gap-3 mb-5">
+                        <div class="z-10 bg-sakura-pink w-10 h-10 rounded-full flex items-center justify-center text-white font-bold shadow-lg text-sm">D${day.day}</div>
+                        <div>
+                            <div class="text-[10px] text-sakura-deep font-bold tracking-widest uppercase">${day.date}</div>
+                            <div class="font-bold text-gray-700 leading-none mt-1">${day.focus}</div>
+                        </div>
+                    </div>
+                    <div class="space-y-4 ml-2">
+                        ${day.items.map(item => `
+                            <div class="glass-card p-4 rounded-sakura ${item.highlight ? 'ring-2 ring-sakura-pink/30' : ''}">
+                                <div class="flex justify-between items-start mb-2">
+                                    <span class="text-[10px] font-black bg-white/80 border border-sakura-pink/20 px-2 py-0.5 rounded text-sakura-deep shadow-sm">${item.time}</span>
+                                    <i class="fas ${item.icon} text-sakura-pink/60"></i>
+                                </div>
+                                <div class="font-bold text-sm text-gray-800">${item.title}</div>
+                                <div class="text-[11px] text-gray-400 mt-1">${item.desc}</div>
+                                
+                                <div class="flex flex-wrap gap-2 mt-3 pt-3 border-t border-dashed border-sakura-pink/20">
+                                    <span class="tag tag-trans"><i class="fas fa-route"></i> ${item.trans}</span>
+                                    <span class="tag tag-dur"><i class="far fa-clock"></i> ${item.dur}</span>
+                                </div>
+                            </div>
+                        `).join('')}
+                    </div>
+                </div>`;
+            });
+            html += `</div>`;
+            el.innerHTML = html;
+        }
+
+        function renderGuide(el) {
+            el.innerHTML = `
+                <div class="px-6 space-y-6">
+                    <h2 class="text-2xl font-bold text-sakura-deep italic">Spring Insight</h2>
+                    <div class="glass-card p-6 rounded-sakura">
+                        <div class="text-sakura-deep font-bold mb-2">🌸 VBP 48H 壓線攻略</div>
+                        <p class="text-xs leading-relaxed text-gray-500">
+                            效期：3/16 10:00 - 3/18 10:00<br><br>
+                            第三天 09:45 左右必須抵達 Centum City，趕在 10:00 前進 Spa Land。一旦刷進，待滿 4 小時絕對沒問題！
+                        </p>
+                    </div>
+                    <div class="glass-card p-6 rounded-sakura border-l-4 border-sakura-pink">
+                        <div class="text-sakura-deep font-bold mb-2">行李寄存提醒</div>
+                        <p class="text-xs text-gray-500">西面站地鐵站出口、樂天百貨附近有大量大型置物櫃。Day 3 建議一出地鐵先寄物，才能無壓力逛 Musinsa。</p>
+                    </div>
+                </div>
+            `;
+        }
+
+        // --- 記帳、備忘錄、資訊功能（同上版優化） ---
+        function renderWallet(el) {
+            let totalKRW = walletData.reduce((sum, item) => sum + parseFloat(item.amount), 0);
+            el.innerHTML = `
+                <div class="px-6 pb-10">
+                    <h2 class="text-2xl font-bold text-sakura-deep italic mb-6">Accounting</h2>
+                    <div class="glass-card p-5 rounded-sakura mb-6 text-center">
+                        <input type="text" id="calc-input" placeholder="5000+3000..." class="w-full bg-transparent border-b border-sakura-pink/30 text-xl font-display py-2 text-center text-sakura-deep">
+                        <div class="flex justify-between items-center mt-3">
+                            <button onclick="calculateCurrency()" class="btn-gradient px-6 py-2 rounded-full text-[10px] font-bold shadow-md">換算 TWD</button>
+                            <div id="calc-result" class="text-lg font-bold text-sakura-deep tracking-tight">TWD 0</div>
+                        </div>
+                    </div>
+                    <div class="glass-card p-5 rounded-sakura mb-6">
+                        <div class="grid grid-cols-2 gap-3 mb-3">
+                            <input type="text" id="exp-name" placeholder="消費名稱" class="bg-white/50 rounded-xl p-2 text-xs border-none">
+                            <input type="number" id="exp-amount" placeholder="KRW" class="bg-white/50 rounded-xl p-2 text-xs border-none">
+                        </div>
+                        <div class="flex gap-2">
+                            <button onclick="document.getElementById('exp-file').click()" class="flex-1 bg-white text-sakura-deep border border-sakura-pink/50 rounded-xl py-2 text-[10px] font-bold"><i class="fas fa-camera mr-1"></i>照片</button>
+                            <button onclick="addExpense()" class="flex-1 btn-gradient rounded-xl py-2 text-[10px] font-bold uppercase tracking-widest">Add</button>
+                        </div>
+                        <input type="file" id="exp-file" accept="image/*" capture="environment" class="hidden" onchange="handleImageUpload(this)">
+                        <div id="img-preview" class="mt-3 hidden"><img src="" class="h-12 w-12 object-cover rounded-lg"></div>
+                    </div>
+                    <div class="flex justify-between items-end mb-4 px-2">
+                        <span class="text-xs font-bold text-gray-400">Total Spent</span>
+                        <span class="text-2xl font-display font-bold text-sakura-deep">₩ ${totalKRW.toLocaleString()}</span>
+                    </div>
+                    <div class="space-y-2">
+                        ${walletData.map((item, idx) => `
+                            <div class="glass-card p-3 rounded-2xl flex items-center gap-3">
+                                ${item.img ? `<img src="${item.img}" class="w-10 h-10 rounded-lg object-cover">` : `<div class="w-10 h-10 bg-sakura-pink/10 rounded-lg flex items-center justify-center text-sakura-pink"><i class="fas fa-receipt text-xs"></i></div>`}
+                                <div class="flex-1">
+                                    <div class="font-bold text-xs">${item.name}</div>
+                                    <div class="text-[9px] text-gray-400">≈ TWD ${Math.round(item.amount / exchangeRate)}</div>
+                                </div>
+                                <div class="font-bold text-sakura-deep text-xs italic">₩${parseFloat(item.amount).toLocaleString()}</div>
+                                <button onclick="deleteExpense(${idx})" class="text-gray-300 px-1"><i class="fas fa-times text-[10px]"></i></button>
+                            </div>
+                        `).reverse().join('')}
+                    </div>
+                </div>
+            `;
+        }
+
+        function renderLists(el) {
+            const prep = ["護照正本", "VBP 憑證", "韓國轉接頭", "行動電源", "eSim/網卡", "WOWPASS"];
+            el.innerHTML = `
+                <div class="px-6">
+                    <h2 class="text-2xl font-bold text-sakura-deep italic mb-6">Check & Memo</h2>
+                    <div class="glass-card p-6 rounded-sakura mb-6">
+                        <div class="text-xs font-bold text-sakura-deep mb-4">行前準備 CheckList</div>
+                        <div class="grid grid-cols-2 gap-3">
+                            ${prep.map(item => `
+                                <label class="flex items-center gap-2 p-2 bg-white/40 rounded-lg border border-white/50 shadow-sm">
+                                    <input type="checkbox" onchange="toggleCheck('${item}')" ${checkList.includes(item) ? 'checked' : ''} class="w-4 h-4 accent-sakura-pink">
+                                    <span class="text-[11px] ${checkList.includes(item) ? 'line-through text-gray-300' : ''}">${item}</span>
+                                </label>
+                            `).join('')}
+                        </div>
+                    </div>
+                    <div class="glass-card p-6 rounded-sakura">
+                        <div class="text-xs font-bold text-sakura-deep mb-3">個人隨手筆記 (網址自動轉換)</div>
+                        <textarea id="memo-input" oninput="saveMemo()" class="w-full h-32 bg-white/50 rounded-xl p-3 text-xs border-none focus:ring-1 focus:ring-sakura-pink shadow-inner" placeholder="在此輸入筆記或 Map 網址...">${memo}</textarea>
+                        <div id="memo-links" class="mt-3 flex flex-wrap gap-2"></div>
+                    </div>
+                </div>
+            `;
+            updateMemoLinks();
+        }
+
+        function renderInfo(el) {
+            el.innerHTML = `
+                <div class="px-6 space-y-6">
+                    <h2 class="text-2xl font-bold text-sakura-deep italic mb-6">Useful Links</h2>
+                    <div class="grid grid-cols-2 gap-4">
+                        <a href="https://www.weather.go.kr/" target="_blank" class="glass-card p-4 rounded-sakura flex flex-col items-center">
+                            <i class="fas fa-cloud-sun text-xl text-blue-300 mb-1"></i>
+                            <span class="text-[10px] font-bold">釜山氣象廳</span>
+                        </a>
+                        <a href="https://map.naver.com/" target="_blank" class="glass-card p-4 rounded-sakura flex flex-col items-center">
+                            <i class="fas fa-map-pin text-xl text-green-400 mb-1"></i>
+                            <span class="text-[10px] font-bold">Naver Map</span>
+                        </a>
+                    </div>
+                    <div class="glass-card p-5 rounded-sakura">
+                        <div class="text-[10px] font-bold text-red-400 mb-3 tracking-widest uppercase">Emergency Support</div>
+                        <div class="space-y-2 text-[11px]">
+                            <div class="flex justify-between border-b border-dashed border-gray-100 pb-1"><span>警察/報案</span><span class="font-bold">112</span></div>
+                            <div class="flex justify-between border-b border-dashed border-gray-100 pb-1"><span>火災/急救</span><span class="font-bold">119</span></div>
+                            <div class="flex justify-between border-b border-dashed border-gray-100 pb-1"><span>24H 旅遊諮詢</span><span class="font-bold">1330</span></div>
+                            <div class="flex justify-between"><span>辦事處(駐韓)</span><span class="font-bold">02-399-2800</span></div>
+                        </div>
+                    </div>
+                </div>
+            `;
+        }
+
+        // --- 核心邏輯 ---
+        function calculateCurrency() {
+            const input = document.getElementById('calc-input').value;
+            try {
+                const total = eval(input.replace(/[^-()\d/*+.]/g, '')) || 0;
+                document.getElementById('calc-result').innerText = `TWD ${Math.round(total / exchangeRate)}`;
+            } catch (e) { document.getElementById('calc-result').innerText = "ERR"; }
+        }
+
+        let tempImgBase64 = '';
+        function handleImageUpload(input) {
+            const file = input.files[0]; if (!file) return;
+            const reader = new FileReader();
+            reader.onload = (e) => {
+                const img = new Image();
+                img.onload = () => {
+                    const canvas = document.createElement('canvas');
+                    canvas.width = 150; canvas.height = 150;
+                    canvas.getContext('2d').drawImage(img, 0, 0, 150, 150);
+                    tempImgBase64 = canvas.toDataURL('image/jpeg', 0.6);
+                    const prev = document.getElementById('img-preview');
+                    prev.classList.remove('hidden'); prev.querySelector('img').src = tempImgBase64;
+                };
+                img.src = e.target.result;
+            };
+            reader.readAsDataURL(file);
+        }
+
+        function addExpense() {
+            const name = document.getElementById('exp-name').value;
+            const amount = document.getElementById('exp-amount').value;
+            if (!name || !amount) return;
+            walletData.push({ name, amount, img: tempImgBase64 });
+            localStorage.setItem('busan_wallet', JSON.stringify(walletData));
+            tempImgBase64 = ''; renderWallet(document.getElementById('app-content'));
+        }
+
+        function deleteExpense(idx) {
+            walletData.splice(idx, 1);
+            localStorage.setItem('busan_wallet', JSON.stringify(walletData));
+            renderWallet(document.getElementById('app-content'));
+        }
+
+        function toggleCheck(item) {
+            checkList = checkList.includes(item) ? checkList.filter(i => i !== item) : [...checkList, item];
+            localStorage.setItem('busan_checklist', JSON.stringify(checkList));
+            renderLists(document.getElementById('app-content'));
+        }
+
+        function saveMemo() {
+            memo = document.getElementById('memo-input').value;
+            localStorage.setItem('busan_memo', memo);
+            updateMemoLinks();
+        }
+
+        function updateMemoLinks() {
+            const urls = memo.match(/(https?:\/\/[^\s]+)/g);
+            const container = document.getElementById('memo-links');
+            if (!container) return;
+            container.innerHTML = (urls || []).map(url => `
+                <a href="${url}" target="_blank" class="bg-sakura-pink text-white px-3 py-1 rounded-full text-[9px] font-bold shadow-sm">
+                    <i class="fas fa-link mr-1"></i>${new URL(url).hostname}
+                </a>
+            `).join('');
+        }
+
+        window.onload = () => switchTab('plan');
+    </script>
+</body>
+</html>
